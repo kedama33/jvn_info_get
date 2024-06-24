@@ -9,14 +9,14 @@ class CSVUtil {
     File importFile = File(importFilePath);
     Stream fread = importFile.openRead();
 
-    List<String> productNameList = [];
+    List<String> productIdList = [];
     await fread.transform(utf8.decoder).transform(const LineSplitter()).listen(
       (String value) {
-        productNameList.add(value);
+        productIdList.add(value);
       },
     ).asFuture();
 
-    return productNameList;
+    return productIdList;
   }
 
   static Future exportCSV({
@@ -26,7 +26,7 @@ class CSVUtil {
     File exportFile = File('$exportFilePath/result.csv');
     for (Vuln data in dataList) {
       await exportFile.writeAsString(
-        '${data.productName}, ${data.url}\n',
+        '${data.productId}, ${data.url}\n',
         mode: FileMode.append,
       );
     }

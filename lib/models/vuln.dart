@@ -1,12 +1,12 @@
 class Vuln {
-  /// 製品名
-  final String productName;
+  /// 製品ID
+  final String productId;
 
   /// ヒットしたページのURL
   final String url;
 
   const Vuln({
-    required this.productName,
+    required this.productId,
     required this.url,
   });
 }

@@ -1,20 +1,23 @@
+import 'package:logger/web.dart';
 import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
 
 class MyJvnUtil {
   /// 該当する脆弱性対策情報を取得
-  static Future<List<String>?> getVulnOverviewListInfo({
-    required String keyword,
-    required String datePublicStartY,
-    required String datePublicStartM,
+  static Future<List<String>?> getVulnOverviewListInfoByProductId({
+    required String productId,
+    required String dateFirstPublishedStartY,
+    required String dateFirstPublishedStartM,
     required String startItem,
   }) async {
-    String uri =
-        "https://jvndb.jvn.jp/myjvn?method=getVulnOverviewList&feed=hnd&rangeDatePublic=n&rangeDatePublished=n&rangeDateFirstPublished=n&keyword=$keyword&datePublicStartY=$datePublicStartY&datePublicStartM=$datePublicStartM&startItem=$startItem";
+    final logger = Logger();
 
+    // 製品IDで検索
+    String uri =
+        "https://jvndb.jvn.jp/myjvn?method=getVulnOverviewList&feed=hnd&rangeDatePublic=n&rangeDatePublished=n&rangeDateFirstPublished=n&productId=$productId&dateFirstPublishedStartY=$dateFirstPublishedStartY&dateFirstPublishedStartM=$dateFirstPublishedStartM&startItem=$startItem";
     try {
-      // 規約に「GETするのは1秒に3, 4個までね」って書いてあったので、0.5秒に1回取得するようにする
-      await Future.delayed(const Duration(milliseconds: 500));
+      // 規約に「長時間の収集であれば秒間あたり2, 3アクセスよりアクセス頻度ゆるめてね」って書いてあったので、1秒に1回取得するようにする
+      await Future.delayed(const Duration(seconds: 1));
 
       http.Response response = await http.get(Uri.parse(uri));
       String data = response.body;
@@ -27,7 +30,7 @@ class MyJvnUtil {
 
       return dataList;
     } catch (e) {
-      print(e);
+      logger.e(e);
     }
     return null;
   }
